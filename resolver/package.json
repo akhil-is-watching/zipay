@@ -1,8 +1,19 @@
 {
   "name": "resolver",
   "version": "1.0.0",
-  "description": "TypeScript resolver project",
+  "author": "",
   "main": "dist/index.js",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  },
+  "description": "TypeScript resolver project",
+  "keywords": [
+    "typescript",
+    "resolver"
+  ],
+  "license": "ISC",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
@@ -11,16 +22,8 @@
     "clean": "rm -rf dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "typescript",
-    "resolver"
-  ],
-  "author": "",
-  "license": "ISC",
   "type": "commonjs",
-  "devDependencies": {
-    "@types/node": "^20.0.0",
-    "typescript": "^5.0.0",
-    "ts-node": "^10.9.0"
+  "dependencies": {
+    "socket.io-client": "^4.8.1"
   }
 }
