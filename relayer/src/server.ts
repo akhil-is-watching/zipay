@@ -1,6 +1,6 @@
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { registerSocketHandlers } from './socket.js';
+import { registerSocketHandlers } from './socket';
 
 const DEFAULT_PORT = Number(process.env.PORT) || 4000;
 
