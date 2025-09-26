@@ -1,5 +1,5 @@
 import type { Socket } from 'socket.io';
-import { CLIENT_EVENTS, SERVER_EVENTS } from '../events.js';
+import { CLIENT_EVENTS, SERVER_EVENTS } from '../events';
 
 export function registerClientPing(socket: Socket) {
   socket.on(CLIENT_EVENTS.PING, payload => {
