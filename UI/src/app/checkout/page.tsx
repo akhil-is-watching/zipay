@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 interface CheckoutData {
   products: Array<{
@@ -26,7 +27,6 @@ export default function CheckoutPage() {
     name: ''
   });
   const [upiId, setUpiId] = useState('');
-  const [cryptoWallet, setCryptoWallet] = useState('');
   const [checkoutData, setCheckoutData] = useState<CheckoutData | null>(null);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function CheckoutPage() {
 
   const handlePayment = () => {
     // Handle payment logic here
-    console.log('Processing payment with:', selectedPayment);
+    console.log('Processing payment with:', selectedPayment);  
     // Clear cart after successful payment
     localStorage.removeItem('cart');
     sessionStorage.removeItem('checkoutData');
@@ -202,20 +202,11 @@ export default function CheckoutPage() {
               </div>
               
               {selectedPayment === 'crypto' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Wallet Address
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter your crypto wallet address"
-                    value={cryptoWallet}
-                    onChange={(e) => setCryptoWallet(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
-                  />
-                  <p className="text-sm text-gray-500 mt-2">
-                    Supported: Bitcoin, Ethereum, USDC
-                  </p>
+                <div className="space-y-4">
+                  {/* Connect Wallet Section */}
+                    <div className="flex items-center justify-between">
+                      <ConnectButton accountStatus={'avatar'} showBalance={true}/>
+                    </div>
                 </div>
               )}
             </div>
