@@ -1,3 +1,5 @@
+import { ObjectId } from 'mongodb';
+
 export type QuoteRequestParams = {
   fromChain: string;
   toChain: string;
@@ -6,4 +8,13 @@ export type QuoteRequestParams = {
   toChainAmount: string;
   sender: string;
   receiver: string;
+};
+
+export type QuoteDocument = QuoteRequestParams & {
+  _id?: ObjectId;
+  createdAt: Date;
+};
+
+export type QuoteResponse = {
+  id: string;
 };

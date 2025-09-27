@@ -1,4 +1,5 @@
-import { QuoteRequestParams } from '../types/quote';
+import { getQuotesCollection } from '../lib/mongo';
+import { QuoteRequestParams, QuoteResponse } from '../types/quote';
 
 export class RelayerService {
   getStatus() {
@@ -7,7 +8,13 @@ export class RelayerService {
     };
   }
 
-  requestQuote(_params: QuoteRequestParams) {
-    return 'Dummy quote response';
+  async requestQuote(params: QuoteRequestParams): Promise<QuoteResponse> {
+    const quotes = await getQuotesCollection();
+    const result = await quotes.insertOne({
+      ...params,
+      createdAt: new Date(),
+    });
+
+    return { id: result.insertedId.toString() };
   }
 }

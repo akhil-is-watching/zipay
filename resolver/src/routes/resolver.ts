@@ -1,4 +1,4 @@
-import { Request, Response, Router } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 import { RelayerService } from '../services/RelayerService';
 import { QuoteRequestParams } from '../types/quote';
 
@@ -11,9 +11,17 @@ resolverRouter.get('/status', (_req: Request, res: Response) => {
 
 resolverRouter.post(
   '/quote',
-  (req: Request<unknown, unknown, QuoteRequestParams>, res: Response) => {
-    const quote = relayerService.requestQuote(req.body);
-    res.json({ quote });
+  async (
+    req: Request<unknown, unknown, QuoteRequestParams>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { id } = await relayerService.requestQuote(req.body);
+      res.json({ id });
+    } catch (error) {
+      next(error);
+    }
   },
 );
 
