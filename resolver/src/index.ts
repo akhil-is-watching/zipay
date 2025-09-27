@@ -1,4 +1,5 @@
 import { io, Socket } from 'socket.io-client';
+import { QuoteRequestPayload, QuoteResponsePayload } from './types/quote';
 
 const SOCKET_URL = process.env.SOCKET_URL || 'http://localhost:4000';
 const RECONNECT_DELAY = 5000;
@@ -47,6 +48,34 @@ function setupEventHandlers(): void {
         console.log(JSON.stringify(data, null, 2));
     });
 
+ socket.on("server:quote-request", async (data: QuoteRequestPayload) => {
+   const timestamp = new Date().toISOString();
+   console.log(`📨 [${timestamp}] Received quote request:`);
+   console.log(JSON.stringify(data, null, 2));
+
+   try {
+     // Calculate fromChainAmount = toChainAmount + 1
+     const toChainAmountNum = parseFloat(data.toChainAmount);
+     const fromChainAmountNum = toChainAmountNum + 1;
+     const fromChainAmount = fromChainAmountNum.toString();
+
+     // Create the response payload
+     const response: QuoteResponsePayload = {
+       ...data, // Spread all properties from the request
+       fromChainAmount: fromChainAmount,
+     };
+
+     console.log(`📤 [${timestamp}] Sending quote response:`);
+     console.log(JSON.stringify(response, null, 2));
+
+     // Emit the response
+     socket?.emit("quote-response", response);
+   } catch (error) {
+     console.error("❌ Error processing quote request:", error);
+   }
+ });
+
+ 
     socket.on('message', (data: any) => {
         const timestamp = new Date().toISOString();
         console.log(`📨 [${timestamp}] Message received:`);
