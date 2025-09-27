@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Payment } from '@zipay/ui-components';
+import { CHAINS } from '@/lib/const';
 
 interface CheckoutData {
   products: Array<{
@@ -205,7 +206,7 @@ export default function CheckoutPage() {
                 <div className="space-y-4">
                   {/* Connect Wallet Section */}
                   <div className="flex items-center justify-between">
-                    <Payment config={{ destChain: 'tron', destToken: 'USDC' }} />
+                    <Payment config={{ destChainId: CHAINS.monad.chainId, destTokenAddress: CHAINS.monad.usdc }} />
                   </div>
                 </div>
               )}

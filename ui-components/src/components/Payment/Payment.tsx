@@ -3,8 +3,8 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { PaymentProvider } from './PaymentProvider';
 
 interface Config {
-  destChain: string;
-  destToken: string;
+  destChainId: number;
+  destTokenAddress: string;
 }
 
 export interface PaymentProps {
