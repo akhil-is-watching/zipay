@@ -6,7 +6,7 @@ export const CHAINS = {
     },
     sepolia: {
         chainId: 11155111,
-        usdc: "0xAEE37f2E7BE54fd0B96B780BEC7Eb92BD2db9F85",
+        usdc: "0x6De8D5a5272c18AAAC7eE50881857A0BeF026294",
         rpc: "https://sepolia.drpc.org",
     },
 };
