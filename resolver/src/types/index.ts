@@ -17,6 +17,11 @@ export interface UserIntent {
     receiver: string;
 }
 
+export interface ExecuteSwapOrderRequest {
+    orderHash: string;
+    signature: string;
+}
+
 export interface SwapOrder {
     orderHash: string;
     userIntent: UserIntent;
