@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Payment } from '@zipay/ui-components';
-import { CHAINS } from '@/lib/const';
+import { Payment, CHAINS } from '@zipay/ui-components';
 
 interface CheckoutData {
   products: Array<{
