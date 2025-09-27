@@ -33,7 +33,7 @@ function setupEventHandlers(): void {
         console.log('✅ Socket.IO connection established');
         console.log(`📝 Socket ID: ${socket?.id}`);
         
-        startPingInterval();
+        /* startPingInterval(); */
     });
 
     socket.on('server:welcome', (data: any) => {
@@ -69,7 +69,7 @@ function setupEventHandlers(): void {
      console.log(JSON.stringify(response, null, 2));
 
      // Emit the response
-     socket?.emit("quote-response", response);
+     socket?.emit("resolver:quote-response", response);
    } catch (error) {
      console.error("❌ Error processing quote request:", error);
    }
@@ -158,7 +158,7 @@ function shutdown(): void {
     process.exit(0);
 }
 
-process.on('SIGINT', shutdown);
-process.on('SIGTERM', shutdown);
+/* process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown); */
 
 start();
