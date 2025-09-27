@@ -1,164 +1,49 @@
-import { io, Socket } from 'socket.io-client';
-import { QuoteRequestPayload, QuoteResponsePayload } from './types/quote';
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import dotenv from 'dotenv';
 
-const SOCKET_URL = process.env.SOCKET_URL || 'http://localhost:4000';
-const RECONNECT_DELAY = 5000;
-const PING_INTERVAL = 10000;
+// Import routes
+import { registerRoutes } from './routes';
 
-let socket: Socket | null = null;
-let pingInterval: NodeJS.Timeout | null = null;
+// Load environment variables
+dotenv.config();
 
-function start(): void {
-    console.log('🚀 Starting Socket.IO resolver...');
-    connect();
-}
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-function connect(): void {
-    console.log(`🔌 Connecting to Socket.IO server: ${SOCKET_URL}`);
-    
-    socket = io(SOCKET_URL, {
-        reconnection: true,
-        reconnectionDelay: RECONNECT_DELAY,
-        reconnectionAttempts: Infinity,
-        transports: ['websocket', 'polling']
-    });
-    
-    setupEventHandlers();
-}
+// Middleware
+app.use(helmet()); // Security headers
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || '*',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
+app.use(morgan('combined')); // Logging
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-function setupEventHandlers(): void {
-    if (!socket) return;
+// Register all routes
+registerRoutes(app);
 
-    socket.on('connect', () => {
-        console.log('✅ Socket.IO connection established');
-        console.log(`📝 Socket ID: ${socket?.id}`);
-        
-        /* startPingInterval(); */
-    });
-
-    socket.on('server:welcome', (data: any) => {
-        const timestamp = new Date().toISOString();
-        console.log(`📨 [${timestamp}] Received welcome message:`);
-        console.log(JSON.stringify(data, null, 2));
-    });
-
-    socket.on('server:pong', (data: any) => {
-        const timestamp = new Date().toISOString();
-        console.log(`🏓 [${timestamp}] Received pong:`);
-        console.log(JSON.stringify(data, null, 2));
-    });
-
- socket.on("server:quote-request", async (data: QuoteRequestPayload) => {
-   const timestamp = new Date().toISOString();
-   console.log(`📨 [${timestamp}] Received quote request:`);
-   console.log(JSON.stringify(data, null, 2));
-
-   try {
-     // Calculate fromChainAmount = toChainAmount + 1
-     const toChainAmountNum = parseFloat(data.toChainAmount);
-     const fromChainAmountNum = toChainAmountNum + 1;
-     const fromChainAmount = fromChainAmountNum.toString();
-
-     // Create the response payload
-     const response: QuoteResponsePayload = {
-       ...data, // Spread all properties from the request
-       fromChainAmount: fromChainAmount,
-     };
-
-     console.log(`📤 [${timestamp}] Sending quote response:`);
-     console.log(JSON.stringify(response, null, 2));
-
-     // Emit the response
-     socket?.emit("resolver:quote-response", response);
-   } catch (error) {
-     console.error("❌ Error processing quote request:", error);
-   }
- });
-
- 
-    socket.on('message', (data: any) => {
-        const timestamp = new Date().toISOString();
-        console.log(`📨 [${timestamp}] Message received:`);
-        
-        try {
-            if (typeof data === 'object') {
-                console.log(JSON.stringify(data, null, 2));
-            } else {
-                console.log(data);
-            }
-        } catch {
-            console.log(data);
-        }
-    });
-
-    socket.on('disconnect', (reason: string) => {
-        console.log(`🔌 Socket.IO connection disconnected. Reason: ${reason}`);
-        stopPingInterval();
-    });
-
-    socket.on('connect_error', (error: Error) => {
-        console.error(`❌ Connection error: ${error.message}`);
-    });
-
-    socket.on('reconnect', (attemptNumber: number) => {
-        console.log(`🔄 Reconnected after ${attemptNumber} attempts`);
-        startPingInterval();
-    });
-
-    socket.on('reconnect_attempt', (attemptNumber: number) => {
-        console.log(`⏳ Reconnection attempt #${attemptNumber}`);
-    });
-
-    socket.on('reconnect_failed', () => {
-        console.error('❌ Reconnection failed');
-    });
-}
-
-function startPingInterval(): void {
-    stopPingInterval();
-    
-    console.log(`⏰ Starting ping interval (every ${PING_INTERVAL / 1000} seconds)`);
-    
-    sendPing();
-    
-    pingInterval = setInterval(() => {
-        sendPing();
-    }, PING_INTERVAL);
-}
-
-function stopPingInterval(): void {
-    if (pingInterval) {
-        clearInterval(pingInterval);
-        pingInterval = null;
-        console.log('⏹️ Stopped ping interval');
+// Error handling middleware
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('Error:', err);
+  res.status(err.status || 500).json({
+    error: {
+      message: err.message || 'Internal Server Error',
+      ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
     }
-}
+  });
+});
 
-function sendPing(): void {
-    if (socket?.connected) {
-        const pingData = {
-            timestamp: new Date().toISOString(),
-            socketId: socket.id
-        };
-        console.log(`📤 Sending ping: ${JSON.stringify(pingData)}`);
-        socket.emit('client:ping', pingData);
-    }
-}
 
-function shutdown(): void {
-    console.log('👋 Shutting down Socket.IO resolver...');
-    
-    stopPingInterval();
-    
-    if (socket) {
-        socket.disconnect();
-        socket = null;
-    }
-    
-    process.exit(0);
-}
+// Start the server
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`📊 Health check: http://localhost:${PORT}/health`);
+});
 
-/* process.on('SIGINT', shutdown);
-process.on('SIGTERM', shutdown); */
-
-start();
+export default app;
