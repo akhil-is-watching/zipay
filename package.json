@@ -4,7 +4,6 @@
   "workspaces": [
     "ui-components",
     "ui",
-    "relayer",
     "resolver"
   ]
 }
