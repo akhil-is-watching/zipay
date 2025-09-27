@@ -8,6 +8,7 @@ export type QuoteRequestParams = {
   toChainAmount: string;
   sender: string;
   receiver: string;
+  hashlock: string;
 };
 
 export type QuoteDocument = QuoteRequestParams & {
