@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { Payment } from '@zipay/ui-components';
 
 interface CheckoutData {
   products: Array<{
@@ -38,7 +38,7 @@ export default function CheckoutPage() {
 
   const handlePayment = () => {
     // Handle payment logic here
-    console.log('Processing payment with:', selectedPayment);  
+    console.log('Processing payment with:', selectedPayment);
     // Clear cart after successful payment
     localStorage.removeItem('cart');
     sessionStorage.removeItem('checkoutData');
@@ -74,7 +74,7 @@ export default function CheckoutPage() {
           {/* Payment Methods */}
           <div className="space-y-6">
             <h2 className="text-xl font-semibold text-gray-900">Payment Method</h2>
-            
+
             {/* Card Payment */}
             <div className="border border-gray-200 rounded-lg p-6">
               <div className="flex items-center mb-4">
@@ -91,7 +91,7 @@ export default function CheckoutPage() {
                   Credit/Debit Card
                 </label>
               </div>
-              
+
               {selectedPayment === 'card' && (
                 <div className="space-y-4">
                   <div>
@@ -102,7 +102,7 @@ export default function CheckoutPage() {
                       type="text"
                       placeholder="1234 5678 9012 3456"
                       value={cardDetails.number}
-                      onChange={(e) => setCardDetails({...cardDetails, number: e.target.value})}
+                      onChange={(e) => setCardDetails({ ...cardDetails, number: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                     />
                   </div>
@@ -115,7 +115,7 @@ export default function CheckoutPage() {
                         type="text"
                         placeholder="MM/YY"
                         value={cardDetails.expiry}
-                        onChange={(e) => setCardDetails({...cardDetails, expiry: e.target.value})}
+                        onChange={(e) => setCardDetails({ ...cardDetails, expiry: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                       />
                     </div>
@@ -127,7 +127,7 @@ export default function CheckoutPage() {
                         type="text"
                         placeholder="123"
                         value={cardDetails.cvv}
-                        onChange={(e) => setCardDetails({...cardDetails, cvv: e.target.value})}
+                        onChange={(e) => setCardDetails({ ...cardDetails, cvv: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                       />
                     </div>
@@ -140,7 +140,7 @@ export default function CheckoutPage() {
                       type="text"
                       placeholder="John Doe"
                       value={cardDetails.name}
-                      onChange={(e) => setCardDetails({...cardDetails, name: e.target.value})}
+                      onChange={(e) => setCardDetails({ ...cardDetails, name: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                     />
                   </div>
@@ -164,7 +164,7 @@ export default function CheckoutPage() {
                   UPI Payment
                 </label>
               </div>
-              
+
               {selectedPayment === 'upi' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -200,13 +200,13 @@ export default function CheckoutPage() {
                   Cryptocurrency
                 </label>
               </div>
-              
+
               {selectedPayment === 'crypto' && (
                 <div className="space-y-4">
                   {/* Connect Wallet Section */}
-                    <div className="flex items-center justify-between">
-                      <ConnectButton accountStatus={'avatar'} showBalance={true}/>
-                    </div>
+                  <div className="flex items-center justify-between">
+                    <Payment />
+                  </div>
                 </div>
               )}
             </div>
@@ -215,7 +215,7 @@ export default function CheckoutPage() {
           {/* Order Summary */}
           <div className="space-y-6">
             <h2 className="text-xl font-semibold text-gray-900">Order Summary</h2>
-            
+
             <div className="bg-gray-50 rounded-lg p-6 space-y-4">
               {/* Order Items */}
               <div className="space-y-3">
@@ -234,9 +234,9 @@ export default function CheckoutPage() {
                   </div>
                 ))}
               </div>
-              
+
               <hr className="border-gray-200" />
-              
+
               <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal</span>
                 <span className="font-medium">
@@ -252,7 +252,7 @@ export default function CheckoutPage() {
               <div className="flex justify-between">
                 <span className="text-gray-600">Shipping</span>
                 <span className="font-medium">
-                  {checkoutData.shipping !== undefined 
+                  {checkoutData.shipping !== undefined
                     ? (checkoutData.shipping === 0 ? 'Free' : `$${checkoutData.shipping.toFixed(2)}`)
                     : '$0.00'
                   }

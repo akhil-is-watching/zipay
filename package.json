@@ -1,0 +1,10 @@
+{
+  "name": "zipay-monorepo",
+  "private": true,
+  "workspaces": [
+    "ui-components",
+    "ui",
+    "relayer",
+    "resolver"
+  ]
+}

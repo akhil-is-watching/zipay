@@ -1,7 +1,7 @@
-.PHONY: install install-relayer install-resolver install-ui \
-	dev dev-relayer dev-resolver dev-ui \
-	build build-relayer build-resolver build-ui \
-	clean clean-relayer clean-resolver clean-ui \
+.PHONY: install install-relayer install-resolver install-ui install-components \
+	dev dev-relayer dev-resolver dev-ui dev-components \
+	build build-relayer build-resolver build-ui build-components \
+	clean clean-relayer clean-resolver clean-ui clean-components \
 	help
 
 # Colors for output
@@ -15,8 +15,12 @@ NC=\033[0m # No Color
 all: help
 
 # Install all dependencies
-install: install-relayer install-resolver install-ui
+install: install-components install-relayer install-resolver install-ui
 	@echo "$(GREEN)✓ All dependencies installed successfully!$(NC)"
+
+install-components:
+	@echo "$(BLUE)Installing ui-components dependencies...$(NC)"
+	@cd ui-components && bun install
 
 install-relayer:
 	@echo "$(BLUE)Installing relayer dependencies...$(NC)"
@@ -34,9 +38,13 @@ install-ui:
 dev:
 	@echo "$(YELLOW)Starting all services in development mode...$(NC)"
 	@echo "$(BLUE)Note: This will run services in parallel. Use Ctrl+C to stop all.$(NC)"
-	@make -j3 dev-relayer dev-resolver dev-ui
+	@make -j4 dev-components dev-relayer dev-resolver dev-ui
 
 # Run individual services
+dev-components:
+	@echo "$(GREEN)Building ui-components in watch mode...$(NC)"
+	@cd ui-components && bun run dev
+
 dev-relayer:
 	@echo "$(GREEN)Starting relayer server...$(NC)"
 	@cd relayer && bun run dev
@@ -50,8 +58,12 @@ dev-ui:
 	@cd ui && bun run dev
 
 # Build all packages
-build: build-relayer build-resolver build-ui
+build: build-components build-relayer build-resolver build-ui
 	@echo "$(GREEN)✓ All packages built successfully!$(NC)"
+
+build-components:
+	@echo "$(BLUE)Building ui-components...$(NC)"
+	@cd ui-components && bun run build
 
 build-relayer:
 	@echo "$(BLUE)Building relayer...$(NC)"
@@ -81,8 +93,12 @@ start-ui:
 	@cd ui && bun run start
 
 # Clean all dependencies and build artifacts
-clean: clean-relayer clean-resolver clean-ui
+clean: clean-components clean-relayer clean-resolver clean-ui
 	@echo "$(GREEN)✓ All packages cleaned!$(NC)"
+
+clean-components:
+	@echo "$(RED)Cleaning ui-components...$(NC)"
+	@rm -rf ui-components/node_modules ui-components/dist ui-components/bun.lockb
 
 clean-relayer:
 	@echo "$(RED)Cleaning relayer...$(NC)"
@@ -103,6 +119,7 @@ reinstall: clean install
 # Check if all services are ready
 check:
 	@echo "$(BLUE)Checking package.json files...$(NC)"
+	@test -f ui-components/package.json && echo "$(GREEN)✓ ui-components/package.json exists$(NC)" || echo "$(RED)✗ ui-components/package.json missing$(NC)"
 	@test -f relayer/package.json && echo "$(GREEN)✓ relayer/package.json exists$(NC)" || echo "$(RED)✗ relayer/package.json missing$(NC)"
 	@test -f resolver/package.json && echo "$(GREEN)✓ resolver/package.json exists$(NC)" || echo "$(RED)✗ resolver/package.json missing$(NC)"
 	@test -f ui/package.json && echo "$(GREEN)✓ ui/package.json exists$(NC)" || echo "$(RED)✗ ui/package.json missing$(NC)"
@@ -116,20 +133,23 @@ help:
 	@echo "$(YELLOW)Available commands:$(NC)"
 	@echo ""
 	@echo "$(GREEN)Installation:$(NC)"
-	@echo "  make install          - Install all dependencies"
-	@echo "  make install-relayer  - Install relayer dependencies only"
-	@echo "  make install-resolver - Install resolver dependencies only"
-	@echo "  make install-ui       - Install UI dependencies only"
-	@echo "  make reinstall        - Clean and reinstall everything"
+	@echo "  make install           - Install all dependencies"
+	@echo "  make install-components- Install ui-components dependencies only"
+	@echo "  make install-relayer   - Install relayer dependencies only"
+	@echo "  make install-resolver  - Install resolver dependencies only"
+	@echo "  make install-ui        - Install UI dependencies only"
+	@echo "  make reinstall         - Clean and reinstall everything"
 	@echo ""
 	@echo "$(GREEN)Development:$(NC)"
 	@echo "  make dev              - Run all services in development mode"
+	@echo "  make dev-components   - Build ui-components in watch mode"
 	@echo "  make dev-relayer      - Run relayer server only"
 	@echo "  make dev-resolver     - Run resolver client only"
 	@echo "  make dev-ui           - Run UI only"
 	@echo ""
 	@echo "$(GREEN)Production:$(NC)"
 	@echo "  make build            - Build all packages"
+	@echo "  make build-components - Build ui-components only"
 	@echo "  make build-relayer    - Build relayer only"
 	@echo "  make build-resolver   - Build resolver only"
 	@echo "  make build-ui         - Build UI only"
@@ -140,6 +160,7 @@ help:
 	@echo ""
 	@echo "$(GREEN)Maintenance:$(NC)"
 	@echo "  make clean            - Remove all node_modules and builds"
+	@echo "  make clean-components - Clean ui-components only"
 	@echo "  make clean-relayer    - Clean relayer only"
 	@echo "  make clean-resolver   - Clean resolver only"
 	@echo "  make clean-ui         - Clean UI only"
