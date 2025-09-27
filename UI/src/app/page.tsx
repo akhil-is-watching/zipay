@@ -18,7 +18,7 @@ const products: Product[] = [
     name: "Wireless Headphones",
     price: 99.99,
     category: "Electronics",
-    image: "🎧",
+    image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=400&h=300&fit=crop",
     description: "High-quality wireless headphones with noise cancellation"
   },
   {
@@ -26,7 +26,7 @@ const products: Product[] = [
     name: "Smart Watch",
     price: 199.99,
     category: "Electronics",
-    image: "⌚",
+    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop",
     description: "Advanced smartwatch with health monitoring"
   },
   {
@@ -34,7 +34,7 @@ const products: Product[] = [
     name: "Running Shoes",
     price: 129.99,
     category: "Sports",
-    image: "👟",
+    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop",
     description: "Comfortable running shoes for all terrains"
   },
   {
@@ -42,7 +42,7 @@ const products: Product[] = [
     name: "Yoga Mat",
     price: 49.99,
     category: "Sports",
-    image: "🧘",
+    image: "https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=400&h=300&fit=crop",
     description: "Premium yoga mat with excellent grip"
   },
   {
@@ -50,7 +50,7 @@ const products: Product[] = [
     name: "Coffee Maker",
     price: 79.99,
     category: "Home",
-    image: "☕",
+    image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop",
     description: "Automatic coffee maker with programmable features"
   },
   {
@@ -58,7 +58,7 @@ const products: Product[] = [
     name: "Bluetooth Speaker",
     price: 89.99,
     category: "Electronics",
-    image: "🔊",
+    image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=300&fit=crop",
     description: "Portable Bluetooth speaker with deep bass"
   },
   {
@@ -66,7 +66,7 @@ const products: Product[] = [
     name: "Fitness Tracker",
     price: 149.99,
     category: "Sports",
-    image: "📱",
+    image: "https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=400&h=300&fit=crop",
     description: "Advanced fitness tracker with heart rate monitor"
   },
   {
@@ -74,7 +74,7 @@ const products: Product[] = [
     name: "Desk Lamp",
     price: 59.99,
     category: "Home",
-    image: "💡",
+    image:"https://plus.unsplash.com/premium_photo-1685287731216-a7a0fae7a41a?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     description: "LED desk lamp with adjustable brightness"
   }
 ];
@@ -150,9 +150,15 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredProducts.map((product) => (
-              <div key={product.id} className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <div key={product.id} className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                <div className="aspect-w-16 aspect-h-9">
+                  <img 
+                    src={product.image} 
+                    alt={product.name}
+                    className="w-full h-48 object-cover"
+                  />
+                </div>
                 <div className="p-6">
-                  <div className="text-4xl mb-4 text-center">{product.image}</div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
                     {product.name}
                   </h3>

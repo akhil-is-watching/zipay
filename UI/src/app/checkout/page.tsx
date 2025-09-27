@@ -205,7 +205,7 @@ export default function CheckoutPage() {
                 <div className="space-y-4">
                   {/* Connect Wallet Section */}
                   <div className="flex items-center justify-between">
-                    <Payment />
+                    <Payment config={{ destChain: 'tron', destToken: 'USDC' }} />
                   </div>
                 </div>
               )}

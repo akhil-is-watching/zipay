@@ -43,5 +43,10 @@
   "sideEffects": [
     "*.css"
   ],
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@1inch/cross-chain-sdk": "^1.0.2",
+    "@tanstack/react-query": "^5.90.2",
+    "ethers": "^6.15.0"
+  }
 }
