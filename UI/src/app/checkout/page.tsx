@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Payment, CHAINS } from '@zipay/ui-components';
+import { Payment } from '../../../ui/Payment';
+import { CHAINS } from '@/lib/const';
+// import { Payment, CHAINS } from '@zipay/ui-components';
 
 interface CheckoutData {
   products: Array<{
@@ -225,12 +227,12 @@ export default function CheckoutPage() {
                 {checkoutData.products.map((product) => (
                   <div key={product.id} className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                    <img 
-                src={product.image} 
-                alt={product.name}
-                className="w-full h-full object-fill"
-              />
-              </div>
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-fill"
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
