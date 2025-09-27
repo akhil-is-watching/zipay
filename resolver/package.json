@@ -25,6 +25,7 @@
   },
   "type": "commonjs",
   "dependencies": {
+    "@1inch/cross-chain-sdk": "^1.0.2",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/helmet": "^4.0.0",

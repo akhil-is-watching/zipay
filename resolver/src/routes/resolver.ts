@@ -1,6 +1,8 @@
 import { Router } from 'express';
+import { RelayerService } from '@/services/RelayerService';
 
 const router = Router();
+const relayerService = new RelayerService();
 
 // POST /createSwap
 router.post('/createSwap', async (req, res) => {});
