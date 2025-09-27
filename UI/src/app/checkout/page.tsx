@@ -225,15 +225,12 @@ export default function CheckoutPage() {
                 {checkoutData.products.map((product) => (
                   <div key={product.id} className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <span className="text-2xl">{product.image}</span>
-                      <div>
-                        <div className="font-medium text-gray-900">{product.name}</div>
-                        <div className="text-sm text-gray-500">Qty: {product.quantity}</div>
-                      </div>
-                    </div>
-                    <span className="font-medium">
-                      ${(product.price * product.quantity).toFixed(2)}
-                    </span>
+                    <img 
+                src={product.image} 
+                alt={product.name}
+                className="w-full h-full object-fill"
+              />
+              </div>
                   </div>
                 ))}
               </div>
@@ -242,19 +239,19 @@ export default function CheckoutPage() {
 
               <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal</span>
-                <span className="font-medium">
+                <span className="font-medium text-gray-900">
                   ${checkoutData.subtotal ? checkoutData.subtotal.toFixed(2) : (checkoutData.total / 1.1).toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Tax</span>
-                <span className="font-medium">
+                <span className="font-medium text-gray-900">
                   ${checkoutData.tax ? checkoutData.tax.toFixed(2) : (checkoutData.total * 0.1).toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Shipping</span>
-                <span className="font-medium">
+                <span className="font-medium text-gray-900">
                   {checkoutData.shipping !== undefined
                     ? (checkoutData.shipping === 0 ? 'Free' : `$${checkoutData.shipping.toFixed(2)}`)
                     : '$0.00'
@@ -262,7 +259,7 @@ export default function CheckoutPage() {
                 </span>
               </div>
               <hr className="border-gray-200" />
-              <div className="flex justify-between text-lg font-semibold">
+              <div className="flex justify-between text-lg font-semibold text-gray-900">
                 <span>Total</span>
                 <span>${checkoutData.total.toFixed(2)}</span>
               </div>

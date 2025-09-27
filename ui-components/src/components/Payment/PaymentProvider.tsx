@@ -3,7 +3,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { WagmiProvider } from 'wagmi';
 import { RainbowKitProvider, getDefaultConfig } from '@rainbow-me/rainbowkit';
-import { mainnet, polygon, optimism, arbitrum, base, sepolia, bsc } from 'wagmi/chains';
+import { mainnet, polygon, optimism, arbitrum, base, sepolia, bsc, tron } from 'wagmi/chains';
 import '@rainbow-me/rainbowkit/styles.css';
 
 const config = getDefaultConfig({
