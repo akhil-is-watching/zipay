@@ -6,55 +6,31 @@ type QuoteRequestPayload = {
   toChain: string;
   fromToken: string;
   toToken: string;
-  toChainAmount: number | string;
+  toChainAmount: string;
 };
 
 type QuoteResponsePayload = QuoteRequestPayload & {
   fromChainAmount: string;
 };
 
-function parseAmount(amount: QuoteRequestPayload['toChainAmount']): number | null {
-  if (typeof amount === 'number' && Number.isFinite(amount)) {
-    return amount;
-  }
 
-  if (typeof amount === 'string') {
-    const parsed = Number(amount.trim());
-    return Number.isFinite(parsed) ? parsed : null;
-  }
-
-  return null;
-}
-
-function computeFromChainAmount(_payload: QuoteRequestPayload, normalizedToChainAmount: number): number {
+function computeFromChainAmount(_payload: QuoteRequestPayload): string {
   // Placeholder until pricing logic is available.
-  return normalizedToChainAmount;
+  return _payload.toChainAmount;
 }
 
-function buildResponsePayload(payload: QuoteRequestPayload, fromChainAmount: number): QuoteResponsePayload {
+function buildResponsePayload(payload: QuoteRequestPayload, fromChainAmount: string): QuoteResponsePayload {
   return {
     ...payload,
-    fromChainAmount: fromChainAmount.toString(),
+    fromChainAmount: fromChainAmount,
   };
 }
 
 export function registerQuoteRequest(socket: Socket) {
-  socket.on(CLIENT_EVENTS.QUOTE_REQUEST, (payload: QuoteRequestPayload) => {
-    console.log('Received client:quote-request', payload);
+  socket.on(CLIENT_EVENTS.QUOTE_REQUEST, (raw: string) => {
+    const payload = JSON.parse(raw) as QuoteRequestPayload;
 
-    const normalizedToChainAmount = parseAmount(payload.toChainAmount);
-
-    if (normalizedToChainAmount === null) {
-      console.warn('Invalid toChainAmount received in quote request', payload);
-      const response: QuoteResponsePayload = {
-        ...payload,
-        fromChainAmount: '0',
-      };
-      socket.emit(SERVER_EVENTS.QUOTE_RESPONSE, response);
-      return;
-    }
-
-    const fromChainAmount = computeFromChainAmount(payload, normalizedToChainAmount);
+    const fromChainAmount = computeFromChainAmount(payload);
     const response = buildResponsePayload(payload, fromChainAmount);
 
     socket.emit(SERVER_EVENTS.QUOTE_RESPONSE, response);
