@@ -37,3 +37,4 @@ relayer/dist/
 relayer/bun.lockb
 
 resolver/node_modules/
+resolver/dist/
