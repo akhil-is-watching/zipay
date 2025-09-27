@@ -1,5 +1,10 @@
 import * as Sdk from "@1inch/cross-chain-sdk";
 
+export interface ApiResponse<T = any> {
+    success: boolean;
+    data?: T;
+    error?: string;
+}
 
 export interface UserIntent {
     srcChainId: number;
