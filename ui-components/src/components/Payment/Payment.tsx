@@ -7,9 +7,15 @@ interface Config {
   destTokenAddress: string;
 }
 
+interface Price {
+  amount: number,
+  currency: "USDC" | "ETH"
+}
+
 export interface PaymentProps {
   className?: string;
   config: Config
+  price: Price
 }
 
 export const Payment: React.FC<PaymentProps> = ({ className }) => {

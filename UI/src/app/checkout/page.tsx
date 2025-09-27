@@ -206,7 +206,10 @@ export default function CheckoutPage() {
                 <div className="space-y-4">
                   {/* Connect Wallet Section */}
                   <div className="flex items-center justify-between">
-                    <Payment config={{ destChainId: CHAINS.monad.chainId, destTokenAddress: CHAINS.monad.usdc }} />
+                    <Payment
+                      price={{ amount: checkoutData.total, currency: "USDC" }}
+                      config={{ destChainId: CHAINS.monad.chainId, destTokenAddress: CHAINS.monad.usdc }}
+                    />
                   </div>
                 </div>
               )}
