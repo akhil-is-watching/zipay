@@ -1,6 +1,7 @@
 import { Collection, Db, MongoClient } from 'mongodb';
 import { QuoteDocument } from '../types/quote';
 import { SecretDocument } from '../types/secret';
+import { SwapDocument } from '../types/quote';
 
 const defaultUri = 'mongodb://localhost:27017/zipay';
 const uri = process.env.MONGODB_URI ?? defaultUri;
@@ -37,4 +38,9 @@ export async function getQuotesCollection(): Promise<Collection<QuoteDocument>> 
 export async function getSecretsCollection(): Promise<Collection<SecretDocument>> {
   const db = await getDatabase();
   return db.collection<SecretDocument>('secrets');
+}
+
+export async function getSwapsCollection(): Promise<Collection<SwapDocument>> {
+  const db = await getDatabase();
+  return db.collection<SwapDocument>('swaps');
 }

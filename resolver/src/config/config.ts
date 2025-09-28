@@ -1,4 +1,6 @@
 // Network configurations
+import dotenv from 'dotenv';
+dotenv.config();
 
 export const PERMIT2 = "0x000000000022D473030F116dDEE9F6B43aC78BA3";
 
@@ -24,3 +26,5 @@ export const NETWORKS = {
       chainId: 10143
     }
 };
+
+export const RESOLVER_PRIVATE_KEY = process.env.PRIVATE_KEY || "";
