@@ -1,0 +1,5 @@
+{
+  "MajorModule#HTLCEscrow": "0xfb0137a662bc0572DBB71Fa26eeE4A5eA34a5c86",
+  "MajorModule#HTLCEscrowFactory": "0x4000d874b8D77e77538682E32106C54C26987dA5",
+  "MajorModule#SettlementEngine": "0x68fA6aD3B9b3cd85063663d78ae58ee3c3128C90"
+}
