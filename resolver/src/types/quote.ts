@@ -19,3 +19,8 @@ export type QuoteDocument = QuoteRequestParams & {
 export type QuoteResponse = {
   id: string;
 };
+
+export type ExecuteRequestParams = {
+  orderId: string;
+  signature: string;
+};

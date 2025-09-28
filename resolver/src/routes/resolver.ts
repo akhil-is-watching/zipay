@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import { RelayerService } from '../services/RelayerService';
-import { QuoteRequestParams } from '../types/quote';
+import { ExecuteRequestParams, QuoteRequestParams } from '../types/quote';
 
 const resolverRouter = Router();
 const relayerService = new RelayerService();
@@ -20,6 +20,35 @@ resolverRouter.post(
       const { id } = await relayerService.requestQuote(req.body);
       res.json({ id });
     } catch (error) {
+      next(error);
+    }
+  },
+);
+
+resolverRouter.post(
+  '/execute',
+  async (
+    req: Request<unknown, unknown, ExecuteRequestParams>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { orderId, signature } = req.body;
+      const success = await relayerService.executeOrder({ orderId, signature });
+      res.json({ success });
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message === 'Invalid order id') {
+          res.status(400).json({ error: error.message });
+          return;
+        }
+
+        if (error.message === 'Order not found') {
+          res.status(404).json({ error: error.message });
+          return;
+        }
+      }
+
       next(error);
     }
   },
