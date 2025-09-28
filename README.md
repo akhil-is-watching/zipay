@@ -50,7 +50,7 @@ make install
 make dev
 ```
 
-## How to use our docs
+## Documentation for using our SDK
 
 [Docs](https://www.zipay.online/docs)
 
