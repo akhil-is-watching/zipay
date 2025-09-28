@@ -41,7 +41,7 @@ const products: Product[] = [
   {
     id: 2,
     name: "Smart Watch",
-    price: 199.99,
+    price: 100,
     category: "Electronics",
     image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop",
     description: "Advanced smartwatch with health monitoring",

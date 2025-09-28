@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@uniswap/permit2-sdk": "^1.4.0",
+    "dotenv": "^16.4.5",
     "ethers": "^5.8.0",
     "express": "^4.19.2",
     "mongodb": "^6.6.0"

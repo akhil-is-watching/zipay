@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { CHAINS, Payment } from '@zipay/zipay-sdk';
-
-// import { Payment, CHAINS } from '@zipay/ui-components';
+import { Payment, CHAINS, CryptoPaymentSummary, usePaymentAmount, CrossChainSwap, useCrossChainSwap } from '@zipay/ui-components';
+import { useAccount, useSignTypedData } from 'wagmi';
 
 interface CheckoutData {
   products: Array<{
@@ -30,6 +29,29 @@ export default function CheckoutPage() {
   });
   const [upiId, setUpiId] = useState('');
   const [checkoutData, setCheckoutData] = useState<CheckoutData | null>(null);
+  
+  // Wagmi hooks
+  const { chainId, address } = useAccount();
+  const { signTypedDataAsync } = useSignTypedData();
+  
+  // Cross-chain swap hooks
+  const { swapState, initiateSwap, executeSwap, settleSwap } = useCrossChainSwap();
+  
+  // Payment amount request for crypto
+  const paymentRequest = selectedPayment === 'crypto' && checkoutData && chainId && address ? {
+    totalAmount: checkoutData.total,
+    fromChainId: chainId,
+    toChainId: CHAINS.monad.chainId,
+    fromToken: "USDC",
+    toToken: "USDC",
+    sender: address,
+    receiver: "0x0cf4Dd9D1024fd436F4ff4Ee785A7aEeAaEED593", // Fixed receiver address
+  } : null;
+  
+  const { data: paymentData, isLoading: isLoadingPayment, error: paymentError } = usePaymentAmount(
+    paymentRequest,
+    selectedPayment === 'crypto' && !!chainId && !!address && !!checkoutData
+  );
 
   useEffect(() => {
     const data = sessionStorage.getItem('checkoutData');
@@ -38,9 +60,88 @@ export default function CheckoutPage() {
     }
   }, []);
 
-  const handlePayment = () => {
-    // Handle payment logic here
-    console.log('Processing payment with:', selectedPayment);
+  const handlePayment = async () => {
+    try {
+      console.log('Processing payment with:', selectedPayment);
+      
+      if (selectedPayment === 'crypto' && paymentData?.quoteId) {
+        // Handle crypto payment with cross-chain swap
+        await handleCryptoPayment();
+      } else {
+        // Handle traditional payments (card/UPI)
+        handleTraditionalPayment();
+      }
+    } catch (error) {
+      
+      alert( (error instanceof Error ? error.message : 'Unknown error'));
+    }
+  };
+
+  const handleCryptoPayment = async () => {
+    if (!checkoutData || !address) return;
+
+    try {
+
+        console.log('⚡ Executing swap with MetaMask signature...');
+        
+        // Mock permit signature structure (replace with actual permit data from your API)
+        const domain = {
+          name: 'USDC',
+          version: '2',
+          chainId: chainId,
+          verifyingContract: CHAINS.sepolia.usdc as `0x${string}`,
+        };
+
+        const types = {
+          Permit: [
+            { name: 'owner', type: 'address' },
+            { name: 'spender', type: 'address' },
+            { name: 'value', type: 'uint256' },
+            { name: 'nonce', type: 'uint256' },
+            { name: 'deadline', type: 'uint256' },
+          ],
+        };
+
+        const message = {
+          owner: address,
+          spender: '0x0cf4Dd9D1024fd436F4ff4Ee785A7aEeAaEED593', // Your contract address
+          value: BigInt(checkoutData.total * 1000000), // USDC has 6 decimals
+          nonce: BigInt(0), // Get from contract
+          deadline: BigInt(Math.floor(Date.now() / 1000) + 3600), // 1 hour from now
+        };
+
+        // Sign with MetaMask
+        const signature = await signTypedDataAsync({
+          domain,
+          types,
+          primaryType: 'Permit',
+          message,
+        });
+
+        console.log('✍️ Signature obtained:', signature);
+
+        // Execute the swap
+        await executeSwap('68d89e98d48477cc8caf45fb', signature);
+      
+
+      // Step 3: Settle swap (reveal secret)
+      if (swapState.step === 'settling') {
+        console.log('🔓 Settling swap...');
+        await settleSwap();
+        
+        // Payment completed successfully
+        localStorage.removeItem('cart');
+        sessionStorage.removeItem('checkoutData');
+        alert('Crypto payment successful! Your cross-chain swap is complete.');
+      }
+
+    } catch (error) {
+      console.error('Crypto payment error:', error);
+      throw error;
+    }
+  };
+
+  const handleTraditionalPayment = () => {
     // Clear cart after successful payment
     localStorage.removeItem('cart');
     sessionStorage.removeItem('checkoutData');
@@ -267,12 +368,86 @@ export default function CheckoutPage() {
               </div>
             </div>
 
+            {/* Crypto Payment Summary */}
+            {selectedPayment === 'crypto' && (paymentData || isLoadingPayment) && (
+              <CryptoPaymentSummary
+                newTokenAmount={paymentData?.newTokenAmount}
+                currency={paymentData?.currency}
+                chainName={paymentData?.chainName}
+                quoteId={paymentData?.quoteId}
+                isLoading={isLoadingPayment}
+                error={paymentError || undefined}
+              />
+            )}
+
+            {/* Swap Status Display */}
+            {selectedPayment === 'crypto' && swapState.step !== 'idle' && (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-900 mb-1">
+                      Cross-Chain Swap Status
+                    </h4>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-lg">
+                        {swapState.step === 'generating' && '🔐'}
+                        {swapState.step === 'initiating' && '🚀'}
+                        {swapState.step === 'executing' && '⚡'}
+                        {swapState.step === 'settling' && '🔓'}
+                        {swapState.step === 'completed' && '✅'}
+                        {swapState.step === 'error' && '❌'}
+                      </span>
+                      <span className="text-sm text-gray-600 capitalize">
+                        {swapState.step.replace('_', ' ')}
+                      </span>
+                    </div>
+                    {swapState.swapId && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        Swap ID: {swapState.swapId}
+                      </p>
+                    )}
+                  </div>
+                  {swapState.isLoading && (
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
+                  )}
+                </div>
+                {swapState.error && (
+                  <div className="mt-2 text-sm text-red-600">
+                    Error: {swapState.error}
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Payment Button */}
             <button
               onClick={handlePayment}
-              className="w-full bg-black text-white py-3 px-6 rounded-md font-medium hover:bg-gray-800 transition-colors duration-200"
+              disabled={selectedPayment === 'crypto' && swapState.isLoading}
+              className="w-full bg-black text-white py-3 px-6 rounded-md font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
             >
-              Complete Payment
+              {selectedPayment === 'crypto' ? (
+                swapState.isLoading ? (
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span>
+                      {swapState.step === 'generating' && 'Generating Secret...'}
+                      {swapState.step === 'initiating' && 'Initiating Swap...'}
+                      {swapState.step === 'executing' && 'Signing Transaction...'}
+                      {swapState.step === 'settling' && 'Settling Swap...'}
+                    </span>
+                  </div>
+                ) : swapState.step === 'completed' ? (
+                  'Payment Complete ✅'
+                ) : swapState.step === 'error' ? (
+                  'Retry Payment'
+                ) : paymentData?.quoteId ? (
+                  'Complete Crypto Payment'
+                ) : (
+                  'Getting Quote...'
+                )
+              ) : (
+                'Complete Payment'
+              )}
             </button>
 
             {/* Security Notice */}
