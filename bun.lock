@@ -22,7 +22,7 @@
       "name": "frontend",
       "version": "0.1.0",
       "dependencies": {
-        "@zipay/ui-components": "workspace:*",
+        "@zipay/zipay-sdk": "^0.1.0",
         "next": "15.5.4",
         "react": "19.1.0",
         "react-dom": "19.1.0",
@@ -690,6 +690,8 @@
     "@zipay/resolver": ["@zipay/resolver@workspace:resolver"],
 
     "@zipay/ui-components": ["@zipay/ui-components@workspace:ui-components"],
+
+    "@zipay/zipay-sdk": ["@zipay/zipay-sdk@0.1.0", "", { "peerDependencies": { "@1inch/cross-chain-sdk": "^1.0.0", "@rainbow-me/rainbowkit": "^2.0.0", "@tanstack/react-query": "^5.0.0", "ethers": "^6.0.0", "react": "^18.0.0 || ^19.0.0", "react-dom": "^18.0.0 || ^19.0.0", "viem": "^2.0.0", "wagmi": "^2.0.0" } }, "sha512-fWrUEvo786AKFZSvtEb28x/qAzv7x1doyz8fRR7BcdNKs5viSAwj3BdXjH3KTefGU73nVRXm0gDq+q51SYRMhg=="],
 
     "abitype": ["abitype@1.1.0", "", { "peerDependencies": { "typescript": ">=5.0.4", "zod": "^3.22.0 || ^4.0.0" }, "optionalPeers": ["typescript", "zod"] }, "sha512-6Vh4HcRxNMLA0puzPjM5GBgT4aAcFGKZzSgAXvuZ27shJP6NEpielTuqbBmZILR5/xd0PizkBGy5hReKz9jl5A=="],
 

@@ -198,7 +198,7 @@ export default function ProductPage() {
   const params = useParams();
   const router = useRouter();
   const [quantity, setQuantity] = useState(1);
-  
+
   const productId = parseInt(params.id as string);
   const product = products.find(p => p.id === productId);
 
@@ -228,14 +228,14 @@ export default function ProductPage() {
   const handleAddToCart = () => {
     // Store in localStorage for cart
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const existingItem = cart.find((item: any) => item.id === product.id);
-    
+    const existingItem = cart.find((item: Product) => item.id === product.id);
+
     if (existingItem) {
       existingItem.quantity += quantity;
     } else {
       cart.push({ ...product, quantity });
     }
-    
+
     localStorage.setItem('cart', JSON.stringify(cart));
     alert('Added to cart!');
   };
@@ -249,8 +249,8 @@ export default function ProductPage() {
             <Link href="/" className="text-2xl font-bold text-gray-900">
               ShopHub
             </Link>
-            <Link 
-              href="/cart" 
+            <Link
+              href="/cart"
               className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors"
             >
               View Cart
@@ -264,8 +264,8 @@ export default function ProductPage() {
           {/* Product Image */}
           <div className="space-y-4">
             <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-              <img 
-                src={product.image} 
+              <img
+                src={product.image}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Payment } from '../../../ui/Payment';
-import { CHAINS } from '@/lib/const';
+import { CHAINS, Payment } from '@zipay/zipay-sdk';
+
 // import { Payment, CHAINS } from '@zipay/ui-components';
 
 interface CheckoutData {
@@ -180,7 +180,7 @@ export default function CheckoutPage() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                   />
                   <p className="text-sm text-gray-500 mt-2">
-                    You'll be redirected to your UPI app to complete the payment
+                    You&apos;ll be redirected to your UPI app to complete the payment
                   </p>
                 </div>
               )}
